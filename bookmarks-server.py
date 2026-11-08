@@ -15,7 +15,7 @@ import re
 # http://base/?min=1996-12-19T16:40:00&max=1996-12-19T16:50:05
 base = """<!DOCTYPE html>
 <html lang="en">
-<head><meta charset="utf-8"><title>Firefox Places Server</title></head>
+<head><meta charset="utf-8"><title>Bookmarks Server</title></head>
 <body>
 <form action="/search" method="GET">
 
