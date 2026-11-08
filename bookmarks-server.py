@@ -352,8 +352,8 @@ class Firefox(BookmarksSearch):
         for row in val:
             elt = {}
             elt['tags'] = self.find_tags(row['id'])
-            elt['title'] = html.escape(row['title'])
-            elt['url'] = row['url'].replace('"', '%22')
+            elt['title'] = row['title']
+            elt['url'] = row['url']
             elt['added'] = row['added']
             elt['modified'] = row['modified']
             res.append(elt)
@@ -417,8 +417,8 @@ class Simple(BookmarksSearch):
             val = self.execute_query("SELECT title,url,time_added FROM pocket WHERE time_added BETWEEN :beg AND :end ORDER BY time_added ASC", ({"beg": start, "end": end}))
         for row in val:
             elt = {}
-            elt['title'] = html.escape(row[0])
-            elt['url'] = row[1].replace('"', '%22')
+            elt['title'] = row[0]
+            elt['url'] = row[1]
             elt['added'] = self.todatetime(row[2])
             res.append(elt)
         return res
@@ -471,9 +471,9 @@ def make_response(path):
             resline = ""
             if 'modified' in row:
                 modified = time.strftime("%A, %B %d, %Y %T %z", row['modified'])
-                resline = "{} ({}) &mdash; <a href=\"{}\">{}</a>".format(added, modified, row['url'], row['title'])
+                resline = "{} ({}) &mdash; <a href=\"{}\">{}</a>".format(added, modified, row['url'].replace('"', '%22'), html.escape(row['title']))
             else:
-                resline = "{} &mdash; <a href=\"{}\">{}</a>".format(added, row['url'], row['title'])
+                resline = "{} &mdash; <a href=\"{}\">{}</a>".format(added, row['url'].replace('"', '%22'), html.escape(row['title']))
             if ('tags' in row) and (len(row['tags']) > 0):
                 resline += " ("
                 if len(row['tags']) > 1:
