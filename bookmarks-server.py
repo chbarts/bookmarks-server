@@ -172,17 +172,6 @@ class Firefox(BookmarksSearch):
         return time.localtime(int(stamp) / 1000000)
 
 
-    def regex(self, expr, item):
-        reg = re.compile(expr)
-        return reg.search(item) is not None
-
-
-    def make_connection(self):
-        con = sqlite3.connect("file:{}?immutable=1".format(self.dbfile))
-        con.create_function("REGEXP", 2, self.regex)
-        return con
-
-
     def find_tags(self, bmid):
         res = []
         db = self.make_connection()
