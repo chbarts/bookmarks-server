@@ -187,8 +187,8 @@ class Firefox(BookmarksSearch):
         res = []
         db = self.make_connection()
         cursor = db.cursor()
-        for row in cursor.execute(queryTagsByBookmark, ({"bmid": bmid})):
-            res += [{"id": row[0], "tag": row[1]}]
+        for row in cursor.execute(self.queryTagsByBookmark, ({"bmid": bmid})):
+            res.append(row[1])
         db.close()
         return res
 
@@ -196,7 +196,7 @@ class Firefox(BookmarksSearch):
     def get_tagid(self, tag):
         db = self.make_connection()
         cursor = db.cursor()
-        cursor.execute(queryTagId, ({"tag": tag}))
+        cursor.execute(self.queryTagId, ({"tag": tag}))
         res = cursor.fetchone()
         db.close()
         if res:
@@ -208,8 +208,8 @@ class Firefox(BookmarksSearch):
         db = self.make_connection()
         cursor = db.cursor()
         res = []
-        for row in cursor.execute(queryTags):
-            res += [row[0]]
+        for row in cursor.execute(self.queryTags):
+            res.append(row[0])
         db.close()
         return res
 
@@ -218,7 +218,7 @@ class Firefox(BookmarksSearch):
         res = []
         db = self.make_connection()
         cursor = db.cursor()
-        for row in cursor.execute(queryByAdded, ({"beg": beg, "end": end})):
+        for row in cursor.execute(self.queryByAdded, ({"beg": beg, "end": end})):
             res += [{"id": row[0], "title": row[1], "url": row[2], "added": self.make_date(row[3]), "modified": self.make_date(row[4])}]
         db.close()
         return res
@@ -228,7 +228,7 @@ class Firefox(BookmarksSearch):
         res = []
         db = self.make_connection()
         cursor = db.cursor()
-        for row in cursor.execute(queryByTagAndAdded, ({"tagid": tagid, "beg": beg, "end": end})):
+        for row in cursor.execute(self.queryByTagAndAdded, ({"tagid": tagid, "beg": beg, "end": end})):
             res += [{"id": row[0], "title": row[1], "url": row[2], "added": self.make_date(row[3]), "modified": self.make_date(row[4])}]
         db.close()
         return res
@@ -238,7 +238,7 @@ class Firefox(BookmarksSearch):
         res = []
         db = self.make_connection()
         cursor = db.cursor()
-        for row in cursor.execute(queryByTitleRegexAndAdded, ({"regex": regex, "beg": beg, "end": end})):
+        for row in cursor.execute(self.queryByTitleRegexAndAdded, ({"regex": regex, "beg": beg, "end": end})):
             res += [{"id": row[0], "title": row[1], "url": row[2], "added": self.make_date(row[3]), "modified": self.make_date(row[4])}]
         db.close()
         return res
@@ -248,7 +248,7 @@ class Firefox(BookmarksSearch):
         res = []
         db = self.make_connection()
         cursor = db.cursor()
-        for row in cursor.execute(queryByUrlRegexAndAdded, ({"regex": regex, "beg": beg, "end": end})):
+        for row in cursor.execute(self.queryByUrlRegexAndAdded, ({"regex": regex, "beg": beg, "end": end})):
             res += [{"id": row[0], "title": row[1], "url": row[2], "added": self.make_date(row[3]), "modified": self.make_date(row[4])}]
         db.close()
         return res
@@ -258,7 +258,7 @@ class Firefox(BookmarksSearch):
         res = []
         db = self.make_connection()
         cursor = db.cursor()
-        for row in cursor.execute(queryByTitleAndUrlRegexAndAdded, ({"tregex": tregex, "uregex": uregex, "beg": beg, "end": end})):
+        for row in cursor.execute(self.queryByTitleAndUrlRegexAndAdded, ({"tregex": tregex, "uregex": uregex, "beg": beg, "end": end})):
             res += [{"id": row[0], "title": row[1], "url": row[2], "added": self.make_date(row[3]), "modified": self.make_date(row[4])}]
         db.close()
         return res
@@ -268,7 +268,7 @@ class Firefox(BookmarksSearch):
         res = []
         db = self.make_connection()
         cursor = db.cursor()
-        for row in cursor.execute(queryByTitleRegexAndTagAndAdded, ({"regex": regex, "beg": beg, "end": end, "tagid": tagid})):
+        for row in cursor.execute(self.queryByTitleRegexAndTagAndAdded, ({"regex": regex, "beg": beg, "end": end, "tagid": tagid})):
             res += [{"id": row[0], "title": row[1], "url": row[2], "added": self.make_date(row[3]), "modified": self.make_date(row[4])}]
         db = close()
         return res
@@ -278,7 +278,7 @@ class Firefox(BookmarksSearch):
         res = []
         db = self.make_connection()
         cursor = db.cursor()
-        for row in cursor.execute(queryByUrlRegexAndAdded, ({"regex": regex, "beg": beg, "end": end, "tagid": tagid})):
+        for row in cursor.execute(self.queryByUrlRegexAndAdded, ({"regex": regex, "beg": beg, "end": end, "tagid": tagid})):
             res += [{"id": row[0], "title": row[1], "url": row[2], "added": self.make_date(row[3]), "modified": self.make_date(row[4])}]
         db.close()
         return res
@@ -288,7 +288,7 @@ class Firefox(BookmarksSearch):
         res = []
         db = self.make_connection()
         cursor = db.cursor()
-        for row in cursor.execute(queryByTitleAndUrlRegexAndAdded, ({"tregex": tregex, "uregex": uregex, "beg": beg, "end": end, "tagid": tagid})):
+        for row in cursor.execute(self.queryByTitleAndUrlRegexAndAdded, ({"tregex": tregex, "uregex": uregex, "beg": beg, "end": end, "tagid": tagid})):
             res += [{"id": row[0], "title": row[1], "url": row[2], "added": self.make_date(row[3]), "modified": self.make_date(row[4])}]
         db.close()
         return res
@@ -354,8 +354,8 @@ class Firefox(BookmarksSearch):
             elt['tags'] = self.find_tags(row['id'])
             elt['title'] = html.escape(row['title'])
             elt['url'] = row['url'].replace('"', '%22')
-            elt['added'] = self.make_date(row['added'])
-            elt['modified'] = self.make_date(row['modified'])
+            elt['added'] = row['added']
+            elt['modified'] = row['modified']
             res.append(elt)
         return res
 
@@ -381,7 +381,7 @@ class Simple(BookmarksSearch):
 
 
     def todatetime(self, stamp):
-        return datetime.fromtimestamp(int(stamp), UTC).replace(tzinfo=timezone.utc).astimezone(tz=None)
+        return time.localtime(int(stamp))
 
 
     def execute_query(self, query, args):
@@ -437,7 +437,7 @@ def make_response(path):
         for tag in tags:
             res += "<li><a href=\"/search?tag={}\">{}</a></li>\n".format(tag, tag)
         res += "</ul>\n"
-        return base.format(res=res, mindef="", maxdef="", treg="", ureg="")
+        return base.format(res=res, mindef="", maxdef="", treg="", ureg="", tag="")
     if "search" in path:
         title_re = None
         url_re = None
@@ -457,20 +457,23 @@ def make_response(path):
         if 'tag' in pquery and len(pquery['tag'][0]) > 0:
             ttag = pquery['tag'][0]
         vals = []
-        for source in sources:
-            if isinstance(source, Firefox):
-                vals += source.search(title=title_re, url=url_re, start=tmin, end=tmax, tag=ttag)
-            else:
+        if ttag:
+            for source in sources:
+                if isinstance(source, Firefox):
+                    vals += source.search(title=title_re, url=url_re, start=tmin, end=tmax, tag=ttag)
+        else:
+            for source in sources:
                 vals += source.search(title=title_re, url=url_re, start=tmin, end=tmax)
-        vals.sort(key=attrgetter('added'))
+        vals.sort(key=lambda elt: time.mktime(elt['added']))
         res = "<ol>\n"
         for row in vals:
-            resline = "{} &mdash; <a href=\"{}\">{}</a>"
             added = time.strftime("%A, %B %d, %Y %T %z", row['added'])
-            modified = None
+            resline = ""
             if 'modified' in row:
                 modified = time.strftime("%A, %B %d, %Y %T %z", row['modified'])
-                resline = "{} ({}) &mdash; <a href=\"{}\">{}</a>"
+                resline = "{} ({}) &mdash; <a href=\"{}\">{}</a>".format(added, modified, row['url'], row['title'])
+            else:
+                resline = "{} &mdash; <a href=\"{}\">{}</a>".format(added, row['url'], row['title'])
             if ('tags' in row) and (len(row['tags']) > 0):
                 resline += " ("
                 if len(row['tags']) > 1:
@@ -490,6 +493,8 @@ def make_response(path):
         if not tmax:
             tmax = ""
         return base.format(res=res, mindef=tmin, maxdef=tmax, treg=html.escape(title_re), ureg=html.escape(url_re), tag=html.escape(ttag))
+    else:
+        return base.format(res="", mindef="", maxdef="", treg="", ureg="", tag="")
 
 
 class HTTPHandler(BaseHTTPRequestHandler):
@@ -515,13 +520,15 @@ parser.add_argument('-p', '--port', metavar='PORT', type=int, nargs=1, required=
 
 args = parser.parse_args()
 
+
 for ff in args.firefox_bookmarks:
     sources.append(Firefox(ff))
+
 
 for sim in args.simple_bookmarks:
     sources.append(Simple(sim))
 
-handler = HTTPHandler()
-httpd = HTTPServer(("", args.port[0]), RequestHandlerClass=handler)
+
+httpd = HTTPServer(("", args.port[0]), RequestHandlerClass=HTTPHandler)
 httpd.serve_forever()
 
