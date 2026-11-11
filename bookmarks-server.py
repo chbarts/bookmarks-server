@@ -384,9 +384,11 @@ class Simple(BookmarksSearch):
         return res
 
 
-    def search(self, title=None, url=None, start=None, end=None):
+    def search(self, title=None, url=None, start=None, end=None, tag=None):
         res = []
         val = []
+        if tag:
+            return []
         datestamps = self.get_datestamps()
         if not start:
             start = datestamps[0]
@@ -446,13 +448,8 @@ def make_response(path):
         if 'tag' in pquery and len(pquery['tag'][0]) > 0:
             ttag = pquery['tag'][0]
         vals = []
-        if ttag:
-            for source in sources:
-                if isinstance(source, Firefox):
-                    vals += source.search(title=title_re, url=url_re, start=tmin, end=tmax, tag=ttag)
-        else:
-            for source in sources:
-                vals += source.search(title=title_re, url=url_re, start=tmin, end=tmax)
+        for source in sources:
+            vals += source.search(title=title_re, url=url_re, start=tmin, end=tmax, tag=ttag)
         vals.sort(key=lambda elt: time.mktime(elt['added']))
         res = "<ol>\n"
         for row in vals:
